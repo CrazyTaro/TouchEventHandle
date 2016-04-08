@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * Created by xuhaolin on 16/1/11.
+ * Created by taro on 16/1/11.
  */
 public class TransformBitmapActivity extends Activity implements View.OnClickListener {
     private ImageView mIvPhoto;
@@ -141,7 +141,7 @@ public class TransformBitmapActivity extends Activity implements View.OnClickLis
                 new Thread() {
                     @Override
                     public void run() {
-                        if (mCropView.restoreBitmap(mOutputPath)) {
+                        if (mCropView.restoreBitmap(mOutputPath, true)) {
                             setResult(RESULT_OK);
                             mPhoto.recycle();
                             String toast = "裁剪图片保存到: " + mOutputPath;

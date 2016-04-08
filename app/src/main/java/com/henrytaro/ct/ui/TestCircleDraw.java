@@ -13,7 +13,7 @@ import com.henrytaro.ct.utils.TouchUtils;
 
 
 /**
- * Created by xuhaolin on 15/9/25.
+ * Created by taro on 15/9/25.
  * 绘制工具类
  */
 public class TestCircleDraw extends AbsTouchEventHandle implements TouchUtils.IScaleEvent, TouchUtils.IMoveEvent {
