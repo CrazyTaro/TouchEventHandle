@@ -1,6 +1,7 @@
 package com.henrytaro.ct.activity;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -18,6 +19,11 @@ public class TouchEventActivity extends Activity {
         mTestView = (TestView) findViewById(R.id.view_test);
         mBtnSubmit = (Button) findViewById(R.id.btn_submit);
 
+        Intent intent = getIntent();
+        if (intent.getExtras() != null) {
+            int whichDraw = intent.getExtras().getInt("whichDraw");
+            mTestView.setWhickDraw(whichDraw);
+        }
         mBtnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

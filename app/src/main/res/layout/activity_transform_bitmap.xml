@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+    <LinearLayout
+            android:id="@+id/transform_menu_lin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:weightSum="2">
+
+        <Button
+                android:id="@+id/transform_left_rotate_btn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:text="左旋"
+                android:textSize="14sp"/>
+
+        <Button
+                android:id="@+id/transform_right_rotate_btn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:text="右旋"
+                android:textSize="14sp"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+            android:id="@+id/transform_operation_lin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:weightSum="2">
+
+        <Button
+                android:id="@+id/transform_cancel_btn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:text="取消"
+                android:textSize="14sp"/>
+
+        <Button
+                android:id="@+id/transform_confirm_btn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:text="确定"
+                android:textSize="14sp"/>
+
+
+    </LinearLayout>
+
+    <ImageView
+            android:id="@+id/transform_bitmap_iv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/transform_operation_lin"
+            android:layout_below="@id/transform_menu_lin"
+            android:layout_centerInParent="true"/>
+
+    <com.henrytaro.ct.ui.CropView
+            android:id="@+id/transform_bitmap_cv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/transform_operation_lin"
+            android:layout_below="@id/transform_menu_lin"
+            android:layout_centerInParent="true"/>
+
+
+</RelativeLayout>
