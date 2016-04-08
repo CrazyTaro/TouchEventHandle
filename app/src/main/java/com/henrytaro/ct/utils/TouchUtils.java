@@ -39,7 +39,7 @@ public class TouchUtils {
     private float mUpX = 0f;
     private float mUpY = 0f;
     //是否打印消息
-    private boolean mIsShowLog = true;
+    private boolean mIsShowLog = false;
 
     public TouchUtils() {
     }
