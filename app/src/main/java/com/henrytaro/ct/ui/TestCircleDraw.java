@@ -51,6 +51,10 @@ public class TestCircleDraw extends AbsTouchEventHandle implements TouchUtils.IS
         canvas.drawCircle(mTouch.getDrawOffsetX() + 300, mTouch.getDrawOffsetY() + 300, mRadius, mPaint);
     }
 
+    public void rollback() {
+        mTouch.rollbackToLastOffset();
+    }
+
     @Override
     public void onSingleTouchEventHandle(MotionEvent event, int extraMotionEvent) {
         //工具类默认处理的单点触摸事件
