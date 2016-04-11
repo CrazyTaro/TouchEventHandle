@@ -126,6 +126,7 @@ public class TouchUtils {
      */
     public void setOffsetX(float offsetX) {
         this.mDrawOffsetX = offsetX;
+        this.mTempDrawOffsetX = offsetX;
     }
 
     /**
@@ -135,6 +136,7 @@ public class TouchUtils {
      */
     public void setOffsetY(float offsetY) {
         this.mDrawOffsetY = offsetY;
+        this.mTempDrawOffsetY = offsetY;
     }
 
     /**
