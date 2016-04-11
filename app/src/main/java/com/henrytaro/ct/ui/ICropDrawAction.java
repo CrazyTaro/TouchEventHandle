@@ -1,7 +1,6 @@
 package com.henrytaro.ct.ui;
 
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
 
 /**
  * Created by taro on 16/4/8.
@@ -10,11 +9,13 @@ public interface ICropDrawAction {
     /**
      * 保存图片
      *
-     * @param filePath     保存路径
-     * @param isRecycleBmp 是否回收图片,若true则回收图片,若false则不回收图片
-     * @return
+     * @param fileNameWithPath 保存路径
+     * @param bmpFormat        保存图片的格式
+     * @param isRecycleBmp     是否回收图片,若true则回收图片,若false则不回收图片
+     * @param bmpQuality       保存图片的质量,在0-100,格式为PNG时此参数无效.
+     * @return 若成功保存图片返回true, 否则返回false
      */
-    public boolean restoreBitmap(String filePath, boolean isRecycleBmp);
+    public boolean restoreBitmap(String fileNameWithPath, Bitmap.CompressFormat bmpFormat, boolean isRecycleBmp, int bmpQuality);
 
     /**
      * 回收图片

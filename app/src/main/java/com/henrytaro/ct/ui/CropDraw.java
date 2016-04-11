@@ -10,7 +10,6 @@ import com.henrytaro.ct.utils.TouchUtils;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 
 /**
  * Created by taro on 16/4/8.
@@ -269,21 +268,35 @@ public class CropDraw extends AbsTouchEventHandle implements TouchUtils.IMoveEve
     }
 
     @Override
-    public boolean restoreBitmap(String filePath, boolean isRecycleBmp) {
-        if (!TextUtils.isEmpty(filePath) && !mBitmap.isRecycled()) {
+    public boolean restoreBitmap(String fileNameWithPath, Bitmap.CompressFormat bmpFormat, boolean isRecycleBmp, int bmpQuality) {
+        if (!TextUtils.isEmpty(fileNameWithPath) && !mBitmap.isRecycled()) {
+            //默认使用PNG
+            if (bmpFormat == null) {
+                String lowerPath = fileNameWithPath.toLowerCase();
+                if (lowerPath.endsWith("png")) {
+                    bmpFormat = Bitmap.CompressFormat.PNG;
+                } else if (lowerPath.endsWith("jpg") || lowerPath.endsWith("jpeg")) {
+                    bmpFormat = Bitmap.CompressFormat.JPEG;
+                } else {
+                    bmpFormat = Bitmap.CompressFormat.PNG;
+                }
+            }
+            if (bmpQuality > 100 || bmpQuality < 0) {
+                bmpQuality = 50;
+            }
             //获取图片裁剪区域
             Rect srcRect = getBitmapScaleRect(mBitmap, mCropRecf, getRectfAfterMove(mBitmapRecf));
             //裁剪当前的图片
             Bitmap cropBmp = Bitmap.createBitmap(mBitmap, srcRect.left, srcRect.top, srcRect.width(), srcRect.height());
 
             try {
-                File bitmapFile = new File(filePath);
+                File bitmapFile = new File(fileNameWithPath);
                 if (!bitmapFile.exists()) {
                     bitmapFile.createNewFile();
                 }
                 //将图片保存到文件中
                 FileOutputStream out = new FileOutputStream(bitmapFile);
-                cropBmp.compress(Bitmap.CompressFormat.PNG, 50, out);
+                cropBmp.compress(bmpFormat, bmpQuality, out);
                 if (isRecycleBmp) {
                     //回收图片
                     mBitmap.recycle();
@@ -292,7 +305,7 @@ public class CropDraw extends AbsTouchEventHandle implements TouchUtils.IMoveEve
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
                 return false;
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
                 return false;
             } finally {
@@ -320,7 +333,7 @@ public class CropDraw extends AbsTouchEventHandle implements TouchUtils.IMoveEve
      * @return
      */
     private boolean drawCropRecf(Canvas canvas) {
-        if (canvas != null) {
+        if (canvas != null && mCropRecf != null) {
             RectF topRecf = new RectF(0, 0, mViewParams.x, mCropRecf.top);
             RectF bottomRecf = new RectF(0, mCropRecf.bottom, mViewParams.x, mViewParams.y);
             RectF leftRecf = new RectF(0, mCropRecf.top, mCropRecf.left, mCropRecf.bottom);
