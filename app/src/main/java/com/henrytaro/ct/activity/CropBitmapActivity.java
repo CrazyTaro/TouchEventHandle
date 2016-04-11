@@ -3,7 +3,7 @@ package com.henrytaro.ct.activity;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.content.res.AssetManager;
+import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -12,10 +12,10 @@ import android.os.Handler;
 import android.os.Message;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.Toast;
 import com.henrytaro.ct.R;
 import com.henrytaro.ct.ui.CropView;
+import com.henrytaro.ct.utils.GrallyAndPhotoUtils;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -24,8 +24,7 @@ import java.io.InputStream;
 /**
  * Created by taro on 16/1/11.
  */
-public class TransformBitmapActivity extends Activity implements View.OnClickListener {
-    private ImageView mIvPhoto;
+public class CropBitmapActivity extends Activity implements View.OnClickListener {
     private Button mBtnLeftRotate;
     private Button mBtnRightRotate;
     private Button mBtnConfirm;
@@ -47,7 +46,7 @@ public class TransformBitmapActivity extends Activity implements View.OnClickLis
      * @param degree        图片旋转了的角度
      */
     public static void startThisActivitySelf(Activity act, String srcBitmapPath, String outputPath, int degree) {
-        Intent intent = new Intent(act, TransformBitmapActivity.class);
+        Intent intent = new Intent(act, CropBitmapActivity.class);
         intent.putExtra("inputPath", srcBitmapPath);
         intent.putExtra("outputPath", outputPath);
         intent.putExtra("degree", degree);
@@ -58,7 +57,6 @@ public class TransformBitmapActivity extends Activity implements View.OnClickLis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_transform_bitmap);
-        mIvPhoto = (ImageView) findViewById(R.id.transform_bitmap_iv);
         mBtnLeftRotate = (Button) findViewById(R.id.transform_left_rotate_btn);
         mBtnRightRotate = (Button) findViewById(R.id.transform_right_rotate_btn);
         mBtnConfirm = (Button) findViewById(R.id.transform_confirm_btn);
@@ -76,24 +74,18 @@ public class TransformBitmapActivity extends Activity implements View.OnClickLis
         mOutputPath = getIntent().getStringExtra("outputPath");
         int degree = getIntent().getIntExtra("degree", 0);
         InputStream in = null;
-        try {
-            if (mFilePath == null) {
-                AssetManager manager = this.getAssets();
-                in = manager.open("pkq.png");
-            } else {
-                in = new FileInputStream(mFilePath);
-            }
-        } catch (IOException e) {
-            Toast.makeText(this, "无法加载图片", Toast.LENGTH_SHORT).show();
-            return;
+        //不存在源图片路径时,加载默认的示例图片资源
+        if (mFilePath == null) {
+            mPhoto = GrallyAndPhotoUtils.decodeBitmapInScale(getResources(), R.raw.pkq, 720);
+        } else {
+            mPhoto = GrallyAndPhotoUtils.decodeBitmapInScale(mFilePath, 720);
         }
-        mPhoto = decodeBitmapInScale(in, 720);
 
         //存在旋转角度,对图片进行旋转
         if (degree != 0) {
-            Matrix matrix = new Matrix();
-            matrix.postRotate(degree);
-            Bitmap originalBitmap = Bitmap.createBitmap(mPhoto, 0, 0, mPhoto.getWidth(), mPhoto.getHeight(), matrix, true);
+            //旋转图片
+            Bitmap originalBitmap = GrallyAndPhotoUtils.rotatingBitmap(degree, mPhoto);
+            //回收旧图片
             mPhoto.recycle();
             mPhoto = originalBitmap;
         }
@@ -116,7 +108,7 @@ public class TransformBitmapActivity extends Activity implements View.OnClickLis
                         mDialog.dismiss();
                         break;
                     case 0x4:
-                        Toast.makeText(TransformBitmapActivity.this, msg
+                        Toast.makeText(CropBitmapActivity.this, msg
                                 .getData().getString("toast"), Toast.LENGTH_LONG).show();
                         break;
                 }
@@ -141,7 +133,7 @@ public class TransformBitmapActivity extends Activity implements View.OnClickLis
                 new Thread() {
                     @Override
                     public void run() {
-                        if (mCropView.restoreBitmap(mOutputPath, true)) {
+                        if (mCropView.restoreBitmap(mOutputPath, Bitmap.CompressFormat.PNG, true, 50)) {
                             setResult(RESULT_OK);
                             mPhoto.recycle();
                             String toast = "裁剪图片保存到: " + mOutputPath;
@@ -165,58 +157,6 @@ public class TransformBitmapActivity extends Activity implements View.OnClickLis
                 setResult(RESULT_CANCELED);
                 finish();
                 break;
-        }
-    }
-
-    /**
-     * 加载缩放后的图片
-     *
-     * @param in        图片流数据
-     * @param largeSize 图片最大边的长度
-     * @return 返回缩放加载后的图片, 但图片的长度并不一定是最大边长度的,只是近似这个值
-     */
-    public static Bitmap decodeBitmapInScale(InputStream in, int largeSize) {
-        if (in == null || largeSize <= 0) {
-            return null;
-        } else {
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inJustDecodeBounds = true;
-            BitmapFactory.decodeStream(in, null, options);
-            //图片原始宽高
-            float width = options.outWidth;
-            float height = options.outHeight;
-            //缩放比例
-            int sampleSize = 1;
-            float largeSizeInBmp = width;
-
-            //记录最大的边
-            if (width > height) {
-                largeSizeInBmp = width;
-            } else {
-                largeSizeInBmp = height;
-            }
-            //将最大边与预期的边大小进行比较计算缩放比
-            if (largeSizeInBmp < largeSize) {
-                //最大边小于预期,则sampleSize为1
-                sampleSize = 1;
-            } else {
-                //最大边大于预期边
-                sampleSize = (int) (largeSizeInBmp / largeSize + 0.5);
-                //计算所得缩放值为2的几倍指数,即求 log2(sampleSize)
-                double powerNum = Math.log(sampleSize) / Math.log(2);
-                int tempPowerNum = (int) powerNum;
-                //将所得指数+1,确保尽可能小于指定值
-                if (powerNum > tempPowerNum) {
-                    tempPowerNum += 1;
-                }
-                //反求sampleSize=2^tempPowerNum
-                sampleSize = (int) Math.pow(2, tempPowerNum);
-            }
-            options.inJustDecodeBounds = false;
-            options.inSampleSize = sampleSize;
-            options.inMutable = true;
-            System.out.println("sampleSize = " + sampleSize + "\nsrcWidth = " + width + "\nsrcHeight = " + height);
-            return BitmapFactory.decodeStream(in, null, options);
         }
     }
 }

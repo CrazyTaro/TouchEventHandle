@@ -59,14 +59,6 @@
 
     </LinearLayout>
 
-    <ImageView
-            android:id="@+id/transform_bitmap_iv"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_above="@id/transform_operation_lin"
-            android:layout_below="@id/transform_menu_lin"
-            android:layout_centerInParent="true"/>
-
     <com.henrytaro.ct.ui.CropView
             android:id="@+id/transform_bitmap_cv"
             android:layout_width="match_parent"
