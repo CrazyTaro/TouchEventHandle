@@ -2,6 +2,7 @@ package com.henrytaro.ct.ui;
 
 import android.graphics.*;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import com.henrytaro.ct.utils.AbsTouchEventHandle;
@@ -24,6 +25,7 @@ public class CropDraw extends AbsTouchEventHandle implements TouchUtils.IMoveEve
     private Paint mPaint = null;
     private Bitmap mBitmap = null;
     private RectF mCropRecf = null;
+    private RectF mTempDstRectf = null;
     private RectF mBitmapRecf = null;
     private PointF mViewParams = null;
 
@@ -43,6 +45,7 @@ public class CropDraw extends AbsTouchEventHandle implements TouchUtils.IMoveEve
         //设置工具类的监听事件
         mTouch.setMoveEvent(this);
         mTouch.setScaleEvent(this);
+        mTouch.setIsShowLog(false);
         //绑定view与触摸事件
         this.mDrawView.setOnTouchListener(this);
 
@@ -97,6 +100,8 @@ public class CropDraw extends AbsTouchEventHandle implements TouchUtils.IMoveEve
         mPaint = new Paint();
         mBitmapRecf = new RectF();
         mViewParams = new PointF();
+        mTempDstRectf = new RectF();
+        mCropRecf = new RectF();
 
         this.setIsShowLog(false, null);
     }
@@ -182,9 +187,6 @@ public class CropDraw extends AbsTouchEventHandle implements TouchUtils.IMoveEve
                     smallDrawSize = mBitmapRecf.width();
                 }
                 //创建裁剪区域对象
-                if (mCropRecf == null) {
-                    mCropRecf = new RectF();
-                }
                 float centerX = mViewParams.x / 2;
                 float centerY = mViewParams.y / 2;
                 mCropRecf.left = centerX - smallDrawSize / 2;
@@ -194,9 +196,17 @@ public class CropDraw extends AbsTouchEventHandle implements TouchUtils.IMoveEve
                 //更新裁剪区域的边大小
                 mCropWidth = mCropRecf.width();
                 mCropHeight = mCropRecf.height();
+
+                Log.i("bmpdraw", "bitmap\nleft=" + mBitmapRecf.left + "\nright=" + mBitmapRecf.right
+                        + "\ntop=" + mBitmapRecf.top + "\nbottom=" + mBitmapRecf.bottom);
+                Log.i("bmpcrop", "crop\nleft=" + mCropRecf.left + "\nright=" + mCropRecf.right
+                        + "\ntop=" + mCropRecf.top + "\nbottom=" + mCropRecf.bottom);
             }
 
-            canvas.drawBitmap(mBitmap, null, getRectfAfterMove(mBitmapRecf), mPaint);
+            RectF moveRectf = getRectfAfterMove(mBitmapRecf, mTempDstRectf);
+            canvas.drawBitmap(mBitmap, null, moveRectf, mPaint);
+//            Log.i("bmpmove", "bitmap\nleft=" + moveRectf.left + "\nright=" + moveRectf.right
+//                    + "\ntop=" + moveRectf.top + "\nbottom=" + moveRectf.bottom);
             return true;
         } else {
             return false;
@@ -207,19 +217,24 @@ public class CropDraw extends AbsTouchEventHandle implements TouchUtils.IMoveEve
      * 获取移动后的实际绘制区域
      *
      * @param src 默认的绘制区域
+     * @param dst
      * @return 返回新的绘制区域对象
      */
-    private RectF getRectfAfterMove(RectF src) {
+    private RectF getRectfAfterMove(RectF src, RectF dst) {
         if (src != null) {
-            RectF moveRectf = new RectF(src);
+            if (dst == null) {
+                dst = new RectF(src);
+            } else {
+                dst.set(src);
+            }
 
             //X/Y添加上偏移量
-            moveRectf.left += mTouch.getDrawOffsetX();
-            moveRectf.top += mTouch.getDrawOffsetY();
-            moveRectf.right += mTouch.getDrawOffsetX();
-            moveRectf.bottom += mTouch.getDrawOffsetY();
+            dst.left += mTouch.getDrawOffsetX();
+            dst.top += mTouch.getDrawOffsetY();
+            dst.right += mTouch.getDrawOffsetX();
+            dst.bottom += mTouch.getDrawOffsetY();
 
-            return moveRectf;
+            return dst;
         } else {
             return null;
         }
@@ -285,7 +300,7 @@ public class CropDraw extends AbsTouchEventHandle implements TouchUtils.IMoveEve
                 bmpQuality = 50;
             }
             //获取图片裁剪区域
-            Rect srcRect = getBitmapScaleRect(mBitmap, mCropRecf, getRectfAfterMove(mBitmapRecf));
+            Rect srcRect = getBitmapScaleRect(mBitmap, mCropRecf, getRectfAfterMove(mBitmapRecf, mTempDstRectf));
             //裁剪当前的图片
             Bitmap cropBmp = Bitmap.createBitmap(mBitmap, srcRect.left, srcRect.top, srcRect.width(), srcRect.height());
 
@@ -386,24 +401,16 @@ public class CropDraw extends AbsTouchEventHandle implements TouchUtils.IMoveEve
 
     @Override
     public boolean isCanMovedOnX(float moveDistanceX, float newOffsetX) {
-        float moveDistance = Math.abs(moveDistanceX);
-        RectF drawRectf = this.getRectfAfterMove(mBitmapRecf);
-        if (moveDistanceX > 0) {
-            return moveDistance <= (mCropRecf.left - drawRectf.left);
-        } else {
-            return moveDistance <= (drawRectf.right - mCropRecf.right);
-        }
+        mTempDstRectf.set(mBitmapRecf);
+        mTempDstRectf.offset(newOffsetX, 0);
+        return (mTempDstRectf.left <= mCropRecf.left && mTempDstRectf.right >= mCropRecf.right);
     }
 
     @Override
     public boolean isCanMovedOnY(float moveDistacneY, float newOffsetY) {
-        float moveDistance = Math.abs(moveDistacneY);
-        RectF drawRectf = this.getRectfAfterMove(mBitmapRecf);
-        if (moveDistacneY > 0) {
-            return moveDistance <= (mCropRecf.top - drawRectf.top);
-        } else {
-            return moveDistance <= (drawRectf.bottom - mCropRecf.bottom);
-        }
+        mTempDstRectf.set(mBitmapRecf);
+        mTempDstRectf.offset(0, newOffsetY);
+        return (mTempDstRectf.top <= mCropRecf.top && mTempDstRectf.bottom >= mCropRecf.bottom);
     }
 
     @Override
@@ -464,7 +471,7 @@ public class CropDraw extends AbsTouchEventHandle implements TouchUtils.IMoveEve
     public void onScale(int suggestEventAction) {
         if (suggestEventAction == MotionEvent.ACTION_POINTER_UP) {
             //调整缩放后图片的位置必须在裁剪框中
-            RectF drawRectf = this.getRectfAfterMove(mBitmapRecf);
+            RectF drawRectf = this.getRectfAfterMove(mBitmapRecf, mTempDstRectf);
             float offsetX = mTouch.getDrawOffsetX();
             float offsetY = mTouch.getDrawOffsetY();
             if (drawRectf.left > mCropRecf.left) {
