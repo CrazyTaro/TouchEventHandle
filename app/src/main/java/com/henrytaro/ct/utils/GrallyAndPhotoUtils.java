@@ -350,30 +350,20 @@ public class GrallyAndPhotoUtils {
     /**
      * 打开相册
      *
-     * @param act      用于启用系统相册的Activity
-     * @param filePath 打开相册获取图片存储的位置
+     * @param act 用于启用系统相册的Activity
      * @return
      */
-    public static Uri openGrally(Activity act, String filePath) {
-        //尝试创建文件
-        File outputImage = new File(filePath);
-        if (!outputImage.exists()) {
-            try {
-                outputImage.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-                return null;
-            }
+    public static void openGrally(Activity act) {
+        if (act == null) {
+            return;
         }
-        //将File对象转换为Uri并启动照相程序
-        Uri avatarUri = Uri.fromFile(outputImage);
 //        //此action也可以使用,此action是选择任何指定类型的文件
 //        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         Intent intent = new Intent(Intent.ACTION_PICK);
         intent.setType("image/*");
         //存在多个相册类型的应用时,显示给用户选择的打个相册的应用界面
         act.startActivityForResult(Intent.createChooser(intent, "请选择"), REQUEST_CODE_OPEN_GRALLY);
-        return avatarUri;
+        return;
     }
 
     /**
@@ -413,7 +403,7 @@ public class GrallyAndPhotoUtils {
 
         Intent intent = new Intent("com.android.camera.action.CROP"); //剪裁
         intent.setDataAndType(inputUri, "image/*");
-        intent.putExtra("crop", false);
+        intent.putExtra("crop", true);
         intent.putExtra("scale", true);
         //设置宽高比例
         intent.putExtra("aspectX", 1);
@@ -432,10 +422,10 @@ public class GrallyAndPhotoUtils {
      *
      * @param requestCode 连接
      * @param resultCode
-     * @param data
-     * @param act
-     * @param inputPath
-     * @param outputPath
+     * @param data        Intent数据
+     * @param act         启动裁剪Activity的act
+     * @param inputPath   裁剪图片的路径(针对拍照保存的路径,相册获取的路径在data中)
+     * @param outputPath  图片裁剪后输出的路径(提供给裁剪Activity)
      * @return
      */
     public static boolean onActivityResult(int requestCode, int resultCode, Intent data, Activity act, String inputPath, String outputPath) {

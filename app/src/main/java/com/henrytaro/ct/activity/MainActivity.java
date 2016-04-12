@@ -2,12 +2,9 @@ package com.henrytaro.ct.activity;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.res.AssetFileDescriptor;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.util.Log;
 import android.view.View;
 import android.widget.*;
 import com.henrytaro.ct.R;
@@ -68,9 +65,7 @@ public class MainActivity extends Activity {
                         break;
                     //相册选择图片
                     case 3:
-                        String grallyFile = Environment.getExternalStorageDirectory().getAbsolutePath() + "/grallyBmp.png";
-                        mInputPath = grallyFile;
-                        GrallyAndPhotoUtils.openGrally(MainActivity.this, grallyFile);
+                        GrallyAndPhotoUtils.openGrally(MainActivity.this);
                         break;
                     //示例图片裁剪
                     case 4:
