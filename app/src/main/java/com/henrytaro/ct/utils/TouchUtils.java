@@ -326,7 +326,9 @@ public class TouchUtils {
             //进行缩放,更新最后一次缩放比例为当前值
             mLastScaleRate = newScaleRate;
             isCanScale = true;
-        } else if (isTrueSetValue) {
+        }
+
+        if (isTrueSetValue) {
             //若缩放比不合法且当前缩放为最后一次缩放(up事件),则将上一次的缩放比作为此次的缩放比,用于记录数据
             //此处不作此操作会导致在缩放的时候达到最大值后放手,再次缩放会在最开始的时候复用上一次缩放的结果(因为没有保存当前缩放值,有闪屏的效果...)
             newScaleRate = mLastScaleRate;
@@ -335,16 +337,13 @@ public class TouchUtils {
             //最后一次必须缩放并保存值
             isCanScale = true;
         }
-        //更新缩放数据
-        mScaleEvent.setScaleRate(newScaleRate, isTrueSetValue);
         if (!isCanScale) {
-            //正常情况下UP事件必定会完成缩放保存工作,此处为保险措施
-            //若为抬起缩放事件,则不管是否已经通知过,必定再通知一次
-            if (invalidateAction == MotionEvent.ACTION_UP) {
-                mScaleEvent.onScaleFail(invalidateAction);
-            }
+            //通知无法进行缩放
+            mScaleEvent.onScaleFail(invalidateAction);
             return;
         }
+        //更新缩放数据
+        mScaleEvent.setScaleRate(newScaleRate, isTrueSetValue);
         //缩放回调
         mScaleEvent.onScale(invalidateAction);
     }
