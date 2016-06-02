@@ -111,8 +111,10 @@ public class GrallyAndPhotoUtils {
             if (in == null || options == null || in.available() <= 0) {
                 return null;
             }
-            Log.i("bmp", "sampleSize = " + options.inSampleSize + "\nsrcWidth = " + options.outWidth + "\nsrcHeight = " + options.outHeight);
-            return BitmapFactory.decodeStream(in, null, options);
+            Log.i("bmp", "\nsampleSize = " + options.inSampleSize + "\nsrcWidth = " + options.outWidth + "\nsrcHeight = " + options.outHeight);
+            Bitmap bmp = BitmapFactory.decodeStream(in, null, options);
+            Log.i("bmp", "\nscaleWidth = " + bmp.getWidth() + "\nscaleHeight = " + bmp.getHeight());
+            return bmp;
         } catch (IOException e) {
             e.printStackTrace();
             return null;

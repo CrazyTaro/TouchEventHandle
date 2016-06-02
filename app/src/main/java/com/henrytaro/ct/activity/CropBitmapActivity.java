@@ -121,6 +121,7 @@ public class CropBitmapActivity extends Activity implements View.OnClickListener
         super.onDestroy();
         if (mPhoto != null && !mPhoto.isRecycled()) {
             mPhoto.recycle();
+            mPhoto = null;
         }
     }
 
@@ -136,6 +137,7 @@ public class CropBitmapActivity extends Activity implements View.OnClickListener
                         if (mCropView.restoreBitmap(mOutputPath, Bitmap.CompressFormat.PNG, true, 50)) {
                             setResult(RESULT_OK);
                             mPhoto.recycle();
+                            mPhoto = null;
                             String toast = "裁剪图片保存到: " + mOutputPath;
                             Bundle data = new Bundle();
                             data.putString("toast", toast);

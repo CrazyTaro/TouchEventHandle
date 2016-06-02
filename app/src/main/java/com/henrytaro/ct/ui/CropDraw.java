@@ -197,16 +197,14 @@ public class CropDraw extends AbsTouchEventHandle implements TouchUtils.IMoveEve
                 mCropWidth = mCropRecf.width();
                 mCropHeight = mCropRecf.height();
 
-                Log.i("bmpdraw", "bitmap\nleft=" + mBitmapRecf.left + "\nright=" + mBitmapRecf.right
-                        + "\ntop=" + mBitmapRecf.top + "\nbottom=" + mBitmapRecf.bottom);
-                Log.i("bmpcrop", "crop\nleft=" + mCropRecf.left + "\nright=" + mCropRecf.right
-                        + "\ntop=" + mCropRecf.top + "\nbottom=" + mCropRecf.bottom);
+//                Log.i("bmpdraw", "bitmap\nleft=" + mBitmapRecf.left + "\nright=" + mBitmapRecf.right
+//                        + "\ntop=" + mBitmapRecf.top + "\nbottom=" + mBitmapRecf.bottom);
+//                Log.i("bmpcrop", "crop\nleft=" + mCropRecf.left + "\nright=" + mCropRecf.right
+//                        + "\ntop=" + mCropRecf.top + "\nbottom=" + mCropRecf.bottom);
             }
 
             RectF moveRectf = getRectfAfterMove(mBitmapRecf, mTempDstRectf);
             canvas.drawBitmap(mBitmap, null, moveRectf, mPaint);
-//            Log.i("bmpmove", "bitmap\nleft=" + moveRectf.left + "\nright=" + moveRectf.right
-//                    + "\ntop=" + moveRectf.top + "\nbottom=" + moveRectf.bottom);
             return true;
         } else {
             return false;
@@ -327,6 +325,7 @@ public class CropDraw extends AbsTouchEventHandle implements TouchUtils.IMoveEve
                 //不管是否裁剪成功,都回收裁剪后的图片,因为这部分是用不到的
                 if (cropBmp != null && !cropBmp.isRecycled()) {
                     cropBmp.recycle();
+                    cropBmp = null;
                 }
             }
         } else {
@@ -338,6 +337,7 @@ public class CropDraw extends AbsTouchEventHandle implements TouchUtils.IMoveEve
     public void recycleBitmap() {
         if (mBitmap != null && !mBitmap.isRecycled()) {
             mBitmap.recycle();
+            mBitmap = null;
         }
     }
 
