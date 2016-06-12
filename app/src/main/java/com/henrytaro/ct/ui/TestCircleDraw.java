@@ -8,17 +8,18 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.view.MotionEvent;
 import android.view.View;
-import com.henrytaro.ct.utils.AbsTouchEventHandle;
-import com.henrytaro.ct.utils.TouchUtils;
+
+import com.henrytaro.ct.utils.MoveAndScaleTouchHelper;
+import com.henrytaro.ct.utils.TouchEventHelper;
 
 
 /**
  * Created by taro on 15/9/25.
  * 绘制工具类
  */
-public class TestCircleDraw extends AbsTouchEventHandle implements TouchUtils.IScaleEvent, TouchUtils.IMoveEvent {
+public class TestCircleDraw implements TouchEventHelper.OnToucheEventListener, MoveAndScaleTouchHelper.IScaleEvent, MoveAndScaleTouchHelper.IMoveEvent {
     //创建工具类
-    TouchUtils mTouch = new TouchUtils();
+    MoveAndScaleTouchHelper mTouch = new MoveAndScaleTouchHelper();
     View mDrawView = null;
     Context mContext = null;
     Paint mPaint = new Paint();
@@ -26,6 +27,8 @@ public class TestCircleDraw extends AbsTouchEventHandle implements TouchUtils.IS
     float mRadius = 200;
     //暂时性保存的半径(同理在绘制时也需要一个暂时性存放的数据)
     float mTempRadius = mRadius;
+
+    private TouchEventHelper mTouchHelper = null;
 
     //针对构造函数,可有不同的需求,在此例中,其实并不需要context
     //此参数是可有可无的,有时自定义绘制界面需要加载一些资源什么的需要用到context,
@@ -37,10 +40,11 @@ public class TestCircleDraw extends AbsTouchEventHandle implements TouchUtils.IS
         mTouch.setMoveEvent(this);
         mTouch.setScaleEvent(this);
         //绑定view与触摸事件
-        this.mDrawView.setOnTouchListener(this);
+        mTouchHelper = new TouchEventHelper(this);
+        this.mDrawView.setOnTouchListener(mTouchHelper);
 
         mTouch.setIsShowLog(false);
-        this.setIsShowLog(false, null);
+        mTouchHelper.setIsShowLog(false, null);
     }
 
     public void onDraw(Canvas canvas) {

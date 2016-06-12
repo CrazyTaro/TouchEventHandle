@@ -6,15 +6,16 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import android.view.MotionEvent;
 import android.view.View;
-import com.henrytaro.ct.utils.AbsTouchEventHandle;
-import com.henrytaro.ct.utils.TouchUtils;
+
+import com.henrytaro.ct.utils.MoveAndScaleTouchHelper;
+import com.henrytaro.ct.utils.TouchEventHelper;
 
 /**
  * Created by taro on 16/3/24.
  */
-public class TestRectangleDraw extends AbsTouchEventHandle implements TouchUtils.IMoveEvent, TouchUtils.IScaleEvent {
+public class TestRectangleDraw implements TouchEventHelper.OnToucheEventListener, MoveAndScaleTouchHelper.IMoveEvent, MoveAndScaleTouchHelper.IScaleEvent {
     //创建工具
-    private TouchUtils mTouch = null;
+    private MoveAndScaleTouchHelper mMoveAndScaleTouchHelper = null;
     //保存显示的View
     private View mDrawView = null;
     //画笔
@@ -25,12 +26,15 @@ public class TestRectangleDraw extends AbsTouchEventHandle implements TouchUtils
     //此数据保存的是每一次缩放后的数据(屏幕不存在触摸时,才算缩放后,缩放时为滑动屏幕期间)
     private RectF mTempRectf = null;
 
+    private TouchEventHelper mTouchHelper = null;
+
     public TestRectangleDraw(View drawView) {
-        mTouch = new TouchUtils();
-        mTouch.setMoveEvent(this);
-        mTouch.setScaleEvent(this);
+        mMoveAndScaleTouchHelper = new MoveAndScaleTouchHelper();
+        mMoveAndScaleTouchHelper.setMoveEvent(this);
+        mMoveAndScaleTouchHelper.setScaleEvent(this);
         mDrawView = drawView;
-        mDrawView.setOnTouchListener(this);
+        mTouchHelper = new TouchEventHelper(this);
+        mDrawView.setOnTouchListener(mTouchHelper);
 
         mPaint = new Paint();
         mPaint.setAntiAlias(true);
@@ -46,12 +50,12 @@ public class TestRectangleDraw extends AbsTouchEventHandle implements TouchUtils
         //必须暂存初始化时使用的数据
         mTempRectf = new RectF(mDrawRectf);
 
-        mTouch.setIsShowLog(false);
-        this.setIsShowLog(false, null);
+        mMoveAndScaleTouchHelper.setIsShowLog(false);
+        mTouchHelper.setIsShowLog(false, null);
     }
 
     public void rollback() {
-        mTouch.rollbackToLastOffset();
+        mMoveAndScaleTouchHelper.rollbackToLastOffset();
     }
 
     public void onDraw(Canvas canvas) {
@@ -59,21 +63,21 @@ public class TestRectangleDraw extends AbsTouchEventHandle implements TouchUtils
         mPaint.setStyle(Paint.Style.FILL);
         //此处是实际的绘制界面+偏移量,偏移量切记不能保存到实际绘制的数据中!!!!
         //不可以使用 mDrawRectf.offset(x,y)
-        canvas.drawRect(mDrawRectf.left + mTouch.getDrawOffsetX(), mDrawRectf.top + mTouch.getDrawOffsetY(),
-                mDrawRectf.right + mTouch.getDrawOffsetX(), mDrawRectf.bottom + mTouch.getDrawOffsetY(),
+        canvas.drawRect(mDrawRectf.left + mMoveAndScaleTouchHelper.getDrawOffsetX(), mDrawRectf.top + mMoveAndScaleTouchHelper.getDrawOffsetY(),
+                mDrawRectf.right + mMoveAndScaleTouchHelper.getDrawOffsetX(), mDrawRectf.bottom + mMoveAndScaleTouchHelper.getDrawOffsetY(),
                 mPaint);
     }
 
     @Override
     public void onSingleTouchEventHandle(MotionEvent event, int extraMotionEvent) {
         //工具类默认处理的单点触摸事件
-        mTouch.singleTouchEvent(event, extraMotionEvent);
+        mMoveAndScaleTouchHelper.singleTouchEvent(event, extraMotionEvent);
     }
 
     @Override
     public void onMultiTouchEventHandle(MotionEvent event, int extraMotionEvent) {
         //工具类默认处理的多点(实际只处理了两点事件)触摸事件
-        mTouch.multiTouchEvent(event, extraMotionEvent);
+        mMoveAndScaleTouchHelper.multiTouchEvent(event, extraMotionEvent);
     }
 
     @Override

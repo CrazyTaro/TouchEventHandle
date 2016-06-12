@@ -2,11 +2,11 @@ package com.henrytaro.ct.ui;
 
 import android.graphics.*;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import com.henrytaro.ct.utils.AbsTouchEventHandle;
-import com.henrytaro.ct.utils.TouchUtils;
+
+import com.henrytaro.ct.utils.MoveAndScaleTouchHelper;
+import com.henrytaro.ct.utils.TouchEventHelper;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -15,9 +15,9 @@ import java.io.FileOutputStream;
 /**
  * Created by taro on 16/4/8.
  */
-public class CropDraw extends AbsTouchEventHandle implements TouchUtils.IMoveEvent, TouchUtils.IScaleEvent, ICropDrawAction {
+public class CropDraw implements TouchEventHelper.OnToucheEventListener, MoveAndScaleTouchHelper.IMoveEvent, MoveAndScaleTouchHelper.IScaleEvent, ICropDrawAction {
     //创建工具类
-    private TouchUtils mTouch = new TouchUtils();
+    private MoveAndScaleTouchHelper mMoveAndScaleTouchHelper = new MoveAndScaleTouchHelper();
     private View mDrawView = null;
     public static final float DEFAULT_CROP_WIDTH = 0;
     public static final float DEFAULT_CROP_HEIGHT = 0;
@@ -36,6 +36,7 @@ public class CropDraw extends AbsTouchEventHandle implements TouchUtils.IMoveEve
     private RectF mTempBmpRectF = null;
 
     private boolean mIsFirstGetViewParams = true;
+    private TouchEventHelper mTouchHelper = null;
 
     //针对构造函数,可有不同的需求,在此例中,其实并不需要context
     //此参数是可有可无的,有时自定义绘制界面需要加载一些资源什么的需要用到context,
@@ -43,11 +44,12 @@ public class CropDraw extends AbsTouchEventHandle implements TouchUtils.IMoveEve
     public CropDraw(View drawView) {
         this.mDrawView = drawView;
         //设置工具类的监听事件
-        mTouch.setMoveEvent(this);
-        mTouch.setScaleEvent(this);
-        mTouch.setIsShowLog(false);
+        mMoveAndScaleTouchHelper.setMoveEvent(this);
+        mMoveAndScaleTouchHelper.setScaleEvent(this);
+        mMoveAndScaleTouchHelper.setIsShowLog(false);
         //绑定view与触摸事件
-        this.mDrawView.setOnTouchListener(this);
+        mTouchHelper = new TouchEventHelper(this);
+        this.mDrawView.setOnTouchListener(mTouchHelper);
 
         initial();
     }
@@ -103,7 +105,7 @@ public class CropDraw extends AbsTouchEventHandle implements TouchUtils.IMoveEve
         mTempDstRectf = new RectF();
         mCropRecf = new RectF();
 
-        this.setIsShowLog(false, null);
+        mTouchHelper.setIsShowLog(false, null);
     }
 
     /**
@@ -227,10 +229,10 @@ public class CropDraw extends AbsTouchEventHandle implements TouchUtils.IMoveEve
             }
 
             //X/Y添加上偏移量
-            dst.left += mTouch.getDrawOffsetX();
-            dst.top += mTouch.getDrawOffsetY();
-            dst.right += mTouch.getDrawOffsetX();
-            dst.bottom += mTouch.getDrawOffsetY();
+            dst.left += mMoveAndScaleTouchHelper.getDrawOffsetX();
+            dst.top += mMoveAndScaleTouchHelper.getDrawOffsetY();
+            dst.right += mMoveAndScaleTouchHelper.getDrawOffsetX();
+            dst.bottom += mMoveAndScaleTouchHelper.getDrawOffsetY();
 
             return dst;
         } else {
@@ -370,13 +372,13 @@ public class CropDraw extends AbsTouchEventHandle implements TouchUtils.IMoveEve
     @Override
     public void onSingleTouchEventHandle(MotionEvent event, int extraMotionEvent) {
         //工具类默认处理的单点触摸事件
-        mTouch.singleTouchEvent(event, extraMotionEvent);
+        mMoveAndScaleTouchHelper.singleTouchEvent(event, extraMotionEvent);
     }
 
     @Override
     public void onMultiTouchEventHandle(MotionEvent event, int extraMotionEvent) {
         //工具类默认处理的多点(实际只处理了两点事件)触摸事件
-        mTouch.multiTouchEvent(event, extraMotionEvent);
+        mMoveAndScaleTouchHelper.multiTouchEvent(event, extraMotionEvent);
     }
 
     @Override
@@ -472,8 +474,8 @@ public class CropDraw extends AbsTouchEventHandle implements TouchUtils.IMoveEve
         if (suggestEventAction == MotionEvent.ACTION_POINTER_UP) {
             //调整缩放后图片的位置必须在裁剪框中
             RectF drawRectf = this.getRectfAfterMove(mBitmapRecf, mTempDstRectf);
-            float offsetX = mTouch.getDrawOffsetX();
-            float offsetY = mTouch.getDrawOffsetY();
+            float offsetX = mMoveAndScaleTouchHelper.getDrawOffsetX();
+            float offsetY = mMoveAndScaleTouchHelper.getDrawOffsetY();
             if (drawRectf.left > mCropRecf.left) {
                 offsetX += mCropRecf.left - drawRectf.left;
             }
@@ -486,8 +488,8 @@ public class CropDraw extends AbsTouchEventHandle implements TouchUtils.IMoveEve
             if (drawRectf.bottom < mCropRecf.bottom) {
                 offsetY += mCropRecf.bottom - drawRectf.bottom;
             }
-            mTouch.setOffsetX(offsetX);
-            mTouch.setOffsetY(offsetY);
+            mMoveAndScaleTouchHelper.setOffsetX(offsetX);
+            mMoveAndScaleTouchHelper.setOffsetY(offsetY);
         }
         mDrawView.postInvalidate();
     }

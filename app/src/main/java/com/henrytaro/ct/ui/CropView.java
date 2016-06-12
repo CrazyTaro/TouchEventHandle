@@ -26,6 +26,7 @@ public class CropView extends View implements ICropDrawAction {
         initial();
     }
 
+
     /**
      * 初始化
      */
