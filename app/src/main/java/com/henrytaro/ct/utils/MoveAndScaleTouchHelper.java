@@ -7,7 +7,7 @@ import android.view.MotionEvent;
  * Created by CT on 16/3/24.
  * 触摸事件的辅助工具类,用于处理基本的拖动及缩放事件,提供简单的回调接口
  */
-public class TouchUtils {
+public class MoveAndScaleTouchHelper {
 
     private IScaleEvent mScaleEvent = null;
     private IMoveEvent mMoveEvent = null;
@@ -41,10 +41,16 @@ public class TouchUtils {
     //是否打印消息
     private boolean mIsShowLog = false;
 
-    public TouchUtils() {
+    public MoveAndScaleTouchHelper() {
     }
 
-    public TouchUtils(IScaleEvent scaleEvent, IMoveEvent moveEvent) {
+    /**
+     * 移动及缩放触摸辅助类
+     *
+     * @param scaleEvent 缩放回调接口
+     * @param moveEvent  移动回调接口
+     */
+    public MoveAndScaleTouchHelper(IScaleEvent scaleEvent, IMoveEvent moveEvent) {
         this.mScaleEvent = scaleEvent;
         this.mMoveEvent = moveEvent;
     }
@@ -274,7 +280,7 @@ public class TouchUtils {
                     mScaleSecondUpX = event.getX(1);
                     mScaleSecondUpY = event.getY(1);
 
-                    newScaleRate = TouchUtils.getScaleRate(mScaleFirstDownX, mScaleFirstDownY, mScaleSecondDownX, mScaleSecondDownY,
+                    newScaleRate = MoveAndScaleTouchHelper.getScaleRate(mScaleFirstDownX, mScaleFirstDownY, mScaleSecondDownX, mScaleSecondDownY,
                             mScaleFirstUpX, mScaleFirstUpY, mScaleSecondUpX, mScaleSecondUpY);
                     invalidateInMultiPoint(newScaleRate, MotionEvent.ACTION_MOVE);
                     break;
@@ -284,7 +290,7 @@ public class TouchUtils {
                     mScaleSecondUpX = event.getX(1);
                     mScaleSecondUpY = event.getY(1);
 
-                    newScaleRate = TouchUtils.getScaleRate(mScaleFirstDownX, mScaleFirstDownY, mScaleSecondDownX, mScaleSecondDownY,
+                    newScaleRate = MoveAndScaleTouchHelper.getScaleRate(mScaleFirstDownX, mScaleFirstDownY, mScaleSecondDownX, mScaleSecondDownY,
                             mScaleFirstUpX, mScaleFirstUpY, mScaleSecondUpX, mScaleSecondUpY);
                     invalidateInMultiPoint(newScaleRate, MotionEvent.ACTION_POINTER_UP);
 
