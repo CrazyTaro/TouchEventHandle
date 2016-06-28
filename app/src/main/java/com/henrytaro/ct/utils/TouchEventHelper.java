@@ -58,7 +58,7 @@ public class TouchEventHelper implements View.OnTouchListener {
     //时间单击事件是否可用
     private boolean mIsClickTimeEventEnable = true;
     //距离单击事件是否可用
-    private boolean mIsClickDistanceEventEnable = true;
+    private boolean mIsClickDistanceEventEnable = false;
     //单击事件的可持续最长时间间隔(down与up事件之间的间隔)
     private int SINGLE_CLICK_INTERVAL = 250;
     //双击事件可可持续最长时间间隔(两次单击事件之间的间隔)
@@ -499,7 +499,7 @@ public class TouchEventHelper implements View.OnTouchListener {
         /**
          * 单击事件处理,由于只要触摸到屏幕且时间足够长,就可以产生move事件,并不一定需要移动触摸才能产生move事件,
          * <font color="#ff9900"><b>所以产生单击事件的同时也会触发up事件{@link #onSingleTouchEventHandle(MotionEvent, int)}</b></font>,
-         * <p>单击事件仅仅只能控制触摸时间<font color="#ff9900"><b>少于500ms</b></font>的触摸事件,超过500ms将不会触摸单击事件</p>
+         * <p>单击事件仅仅只能控制触摸时间<font color="#ff9900"><b>少于250ms</b></font>的触摸事件,超过250ms将不会触摸单击事件</p>
          *
          * @param event 单击触摸事件
          */
