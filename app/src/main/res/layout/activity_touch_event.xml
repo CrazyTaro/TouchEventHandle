@@ -11,16 +11,16 @@
         android:layout_alignParentBottom="true"
         android:text="恢复位置"/>
 
-    <com.taro.touchevent.TestView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+    <!--<com.taro.touchevent.TestView-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"/>-->
 
     <com.taro.touchevent.ui.TestView
         android:id="@+id/view_test"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/btn_submit"
-        android:visibility="gone"/>
+        android:visibility="visible"/>
 
 
 </RelativeLayout>

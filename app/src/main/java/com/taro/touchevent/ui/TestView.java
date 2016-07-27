@@ -17,9 +17,9 @@ public class TestView extends View {
     private int mWhickDraw = RECTANGLE_DRAW;
 
     //创建绘制圆形示例界面专用的绘制类
-    TestCircleDraw mTestCircleDraw = new TestCircleDraw(this, getContext());
+    TestCircleDraw mTestCircleDraw = null;
     //创建绘制方形示例界面专用的绘制类
-    TestRectangleDraw mTestRectfDraw = new TestRectangleDraw(this);
+    TestRectangleDraw mTestRectfDraw = null;
 
     public TestView(Context context) {
         super(context);
@@ -34,15 +34,20 @@ public class TestView extends View {
     }
 
     public void rollback() {
-        if(mWhickDraw==RECTANGLE_DRAW) {
+        if (mWhickDraw == RECTANGLE_DRAW) {
             mTestRectfDraw.rollback();
-        }else if(mWhickDraw==CIRCLE_DRAW){
+        } else if (mWhickDraw == CIRCLE_DRAW) {
             mTestCircleDraw.rollback();
         }
     }
 
     public void setWhickDraw(int which) {
         mWhickDraw = which;
+        if (mWhickDraw == RECTANGLE_DRAW) {
+            mTestRectfDraw = new TestRectangleDraw(this);
+        } else {
+            mTestCircleDraw = new TestCircleDraw(this);
+        }
     }
 
     @Override
