@@ -1,26 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.henrytaro.ct">
+<manifest package="com.taro.touchevent"
+          xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 
     <application
-            android:allowBackup="true"
-            android:icon="@mipmap/ic_launcher"
-            android:label="@string/app_name"
-            android:theme="@style/AppTheme">
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme">
         <activity
-                android:name=".activity.MainActivity"
-                android:label="@string/app_name">
+            android:name="com.taro.touchevent.activity.MainActivity"
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".activity.CropBitmapActivity"/>
-        <activity android:name=".activity.TouchEventActivity"/>
+        <activity android:name="com.taro.touchevent.activity.CropBitmapActivity"/>
+        <activity android:name="com.taro.touchevent.activity.TouchEventActivity"/>
+        <activity android:name="com.taro.touchevent.zoom.ZoomBrowserActivity"/>
+
+
+        <activity
+            android:name="com.taro.touchevent.launch.StandardActivity"
+            android:launchMode="standard">
+            <!--<intent-filter>-->
+                <!--<action android:name="android.intent.action.MAIN"/>-->
+                <!--<action android:name="1_intent_standard"/>-->
+
+                <!--<category android:name="android.intent.category.LAUNCHER"/>-->
+            <!--</intent-filter>-->
+        </activity>
+        <activity
+            android:name="com.taro.touchevent.launch.SingleTopActivity"
+            android:launchMode="singleTop">
+            <intent-filter>
+                <action android:name="1_intent_single_top"/>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.taro.touchevent.launch.SingleTaskActivity"
+            android:launchMode="singleTask">
+            <intent-filter>
+                <action android:name="1_intent_single_task"/>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.taro.touchevent.launch.SingleInstanceActivity"
+            android:launchMode="singleInstance">
+            <intent-filter>
+                <action android:name="1_intent_single_instance"/>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

@@ -59,7 +59,7 @@
 
     </LinearLayout>
 
-    <com.henrytaro.ct.ui.CropView
+    <com.taro.touchevent.ui.CropView
             android:id="@+id/transform_bitmap_cv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
