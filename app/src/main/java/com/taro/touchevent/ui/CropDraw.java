@@ -408,14 +408,14 @@ public class CropDraw implements TouchEventHelper.OnToucheEventListener, MoveAnd
 
 
     @Override
-    public boolean isCanMovedOnX(float moveDistanceX, float newOffsetX) {
+    public boolean isCanMovedOnX(float moveDistanceX, float newOffsetX, float moveDistanceY, float newOffsetY) {
         mTempDstRectf.set(mBitmapRecf);
         mTempDstRectf.offset(newOffsetX, 0);
         return (mTempDstRectf.left <= mCropRecf.left && mTempDstRectf.right >= mCropRecf.right);
     }
 
     @Override
-    public boolean isCanMovedOnY(float moveDistacneY, float newOffsetY) {
+    public boolean isCanMovedOnY(float moveDistacneY, float newOffsetY, float moveDistanceX, float newOffsetX) {
         mTempDstRectf.set(mBitmapRecf);
         mTempDstRectf.offset(0, newOffsetY);
         return (mTempDstRectf.top <= mCropRecf.top && mTempDstRectf.bottom >= mCropRecf.bottom);

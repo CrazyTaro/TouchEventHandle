@@ -89,12 +89,12 @@ public class TestCircleDraw implements TouchEventHelper.OnToucheEventListener, M
     }
 
     @Override
-    public boolean isCanMovedOnX(float moveDistanceX, float newOffsetX) {
+    public boolean isCanMovedOnX(float moveDistanceX, float newOffsetX,float moveDistacneY, float newOffsetY) {
         return true;
     }
 
     @Override
-    public boolean isCanMovedOnY(float moveDistacneY, float newOffsetY) {
+    public boolean isCanMovedOnY(float moveDistacneY, float newOffsetY,float moveDistanceX, float newOffsetX) {
         return true;
     }
 
