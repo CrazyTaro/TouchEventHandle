@@ -374,12 +374,12 @@ public class MoveAndScaleTouchHelper {
             float newDrawOffsetY = mTempDrawOffsetY + moveDistanceY;
 
             //当前绘制的最左边边界坐标大于0(即边界已经显示在屏幕上时),且移动方向为向右移动
-            if (!mMoveEvent.isCanMovedOnX(moveDistanceX, newDrawOffsetX)) {
+            if (!mMoveEvent.isCanMovedOnX(moveDistanceX, newDrawOffsetX, moveDistanceY, newDrawOffsetY)) {
                 //保持原来的偏移量不变
                 newDrawOffsetX = mDrawOffsetX;
             }
             //当前绘制的顶端坐标大于0且移动方向为向下移动
-            if (!mMoveEvent.isCanMovedOnY(moveDistanceY, newDrawOffsetY)) {
+            if (!mMoveEvent.isCanMovedOnY(moveDistanceY, newDrawOffsetY, moveDistanceX, newDrawOffsetX)) {
                 //保持原来的Y轴偏移量
                 newDrawOffsetY = mDrawOffsetY;
             }
@@ -475,22 +475,26 @@ public class MoveAndScaleTouchHelper {
     public interface IMoveEvent {
 
         /**
-         * 是否可以实现X轴的移动
+         * 是否可以实现X轴的移动,负表示向右移动,正表示向左移动
          *
          * @param moveDistanceX 当次X轴的移动距离(可正可负)
-         * @param newOffsetX    新的X轴偏移量(若允许移动的情况下,此值实际上即为上一次偏移量加上当次的移动距离)
+         * @param newOffsetX    本次移动中X轴偏移量(若允许移动的情况下,此值实际上即为上一次偏移量加上当次的移动距离)
+         * @param moveDistanceY 当次Y轴的移动距离(可正可负)
+         * @param newOffsetY    本次移动中Y轴偏移量(若允许移动的情况下,此值实际上即为上一次偏移量加上当次的移动距离)
          * @return
          */
-        public abstract boolean isCanMovedOnX(float moveDistanceX, float newOffsetX);
+        public abstract boolean isCanMovedOnX(float moveDistanceX, float newOffsetX, float moveDistanceY, float newOffsetY);
 
         /**
-         * 是否可以实现Y轴的移动
+         * 是否可以实现Y轴的移动,负表示向下移动,正表示向上移动
          *
-         * @param moveDistacneY 当次Y轴的移动距离(可正可负)
-         * @param newOffsetY    新的Y轴偏移量(若允许移动的情况下,此值实际上即为上一次偏移量加上当次的移动距离)
+         * @param moveDistanceY 当次Y轴的移动距离(可正可负)
+         * @param newOffsetY    本次移动中Y轴偏移量(若允许移动的情况下,此值实际上即为上一次偏移量加上当次的移动距离)
+         * @param moveDistanceX 当次X轴的移动距离(可正可负)
+         * @param newOffsetX    本次移动中X轴偏移量(若允许移动的情况下,此值实际上即为上一次偏移量加上当次的移动距离)
          * @return
          */
-        public abstract boolean isCanMovedOnY(float moveDistacneY, float newOffsetY);
+        public abstract boolean isCanMovedOnY(float moveDistanceY, float newOffsetY, float moveDistanceX, float newOffsetX);
 
         /**
          * 移动事件
