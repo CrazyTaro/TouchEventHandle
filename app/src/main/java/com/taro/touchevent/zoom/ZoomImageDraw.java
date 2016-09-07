@@ -11,7 +11,6 @@ import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.taro.touchevent.ui.ICropDrawAction;
 import com.taro.touchevent.utils.MoveAndScaleTouchHelper;
 import com.taro.touchevent.utils.TouchEventHelper;
 

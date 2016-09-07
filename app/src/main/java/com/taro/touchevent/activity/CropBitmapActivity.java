@@ -12,7 +12,6 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.taro.touchevent.R;
-import com.taro.touchevent.ui.CropView;
 import com.taro.touchevent.utils.GrallyAndPhotoUtils;
 
 import java.io.InputStream;

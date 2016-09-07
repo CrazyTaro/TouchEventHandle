@@ -6,7 +6,6 @@ import android.graphics.Canvas;
 import android.util.AttributeSet;
 import android.view.View;
 
-import com.taro.touchevent.ui.ICropDrawAction;
 import com.taro.touchevent.utils.TouchEventHelper;
 
 /**
